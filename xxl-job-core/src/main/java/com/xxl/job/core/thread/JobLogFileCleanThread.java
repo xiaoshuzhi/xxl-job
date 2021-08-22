@@ -30,6 +30,7 @@ public class JobLogFileCleanThread {
     public void start(final long logRetentionDays){
 
         // limit min value
+        // 至少保留三天，否则相当于关闭日志清理的功能
         if (logRetentionDays < 3 ) {
             return;
         }

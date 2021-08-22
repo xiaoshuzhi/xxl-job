@@ -71,13 +71,20 @@ public class XxlJobExecutor  {
         XxlJobFileAppender.initLogPath(logPath);
 
         // init invoker, admin-client
+        // 背景解释：在客户端我们需要配置服务端的访问地址，多个地址用逗号隔开
+        // 这里就是将访问地址以及token初始化AdminBiz类对象，存入静态的List中，方便调用他们的callback(),registry(),removeRegistry()方法
         initAdminBizList(adminAddresses, accessToken);
 
 
         // init JobLogFileCleanThread
+        // 内部启动一个线程，一天执行一次。
+        // 根据配置的日志文件保留天数，清除过期的日志文件。如果配置的保留天数小于3，则表示关闭清除过期日志文件的功能
+        // 日志文件名是以yyyy-MM-dd的格式命名，所以只要获取当前时间，便利日志文件夹下的文件，将文件转化成日期，就可判断文件是否过期
         JobLogFileCleanThread.getInstance().start(logRetentionDays);
 
         // init TriggerCallbackThread
+        // 内部启动两个线程，一个回调线程一直执行，重试线程30秒执行一次
+        // 内部的一个阻塞队列存放各任务的执行结果，回调线程就是一直拉取队列中的任务执行结果，调用服务端的callback接口，将执行结果返回服务端
         TriggerCallbackThread.getInstance().start();
 
         // init executor-server
