@@ -27,7 +27,7 @@ public class XxlJobScheduler  {
         // admin trigger pool start
         // 维护两个线程池：快慢线程池。每一次触发任务执行都会在线程池中创建一个线程。
         // 线程执行逻辑仅仅是调用XxlJobTrigger.trigger(),可见触发任务执行的耗时操作都在trigger中。
-        // 快慢线程池的选择通过一分钟内触发超时次数来决定，超时阈值是500毫米，次数是10。如果一个任务在一分钟内触发超时10次，那么在第十一次触发线程将会使用慢线程池执行。
+        // 快慢线程池的选择通过一分钟内触发超时次数来决定，超时阈值是500毫秒，次数是10。如果一个任务在一分钟内触发超时10次，那么在第十一次触发线程将会使用慢线程池执行。
         JobTriggerPoolHelper.toStart();
 
         // admin registry monitor run

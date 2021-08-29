@@ -22,11 +22,13 @@ import java.util.Date;
 public class ExecutorBizImpl implements ExecutorBiz {
     private static Logger logger = LoggerFactory.getLogger(ExecutorBizImpl.class);
 
+    // 心跳检测接口：有返回说明有心跳
     @Override
     public ReturnT<String> beat() {
         return ReturnT.SUCCESS;
     }
 
+    //
     @Override
     public ReturnT<String> idleBeat(IdleBeatParam idleBeatParam) {
 
@@ -43,6 +45,9 @@ public class ExecutorBizImpl implements ExecutorBiz {
         return ReturnT.SUCCESS;
     }
 
+    // 根据jobId校验任务及其内部的IJobHandler。
+    // 校验不通过则重新注册，返回触发失败，校验通过则判断该任务线程是否正在运行，根据配置的规则，选择丢弃本此触发、覆盖上次触发，或者排队执行。
+    // 所谓执行不过就是将triggerParam 放入任务线程的阻塞队列中。
     @Override
     public ReturnT<String> run(TriggerParam triggerParam) {
         // load old：jobHandler + jobThread
@@ -148,6 +153,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         return pushResult;
     }
 
+    // 根据任务id移除对应任务线程
     @Override
     public ReturnT<String> kill(KillParam killParam) {
         // kill handlerThread, and create new one
@@ -160,6 +166,7 @@ public class ExecutorBizImpl implements ExecutorBiz {
         return new ReturnT<String>(ReturnT.SUCCESS_CODE, "job thread already killed.");
     }
 
+    // 读取指定日志文件下中指定行号的日志。
     @Override
     public ReturnT<LogResult> log(LogParam logParam) {
         // log filename: logPath/yyyy-MM-dd/9999.log

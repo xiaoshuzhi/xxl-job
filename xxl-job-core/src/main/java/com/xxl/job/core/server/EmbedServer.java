@@ -86,6 +86,7 @@ public class EmbedServer {
                     logger.info(">>>>>>>>>>> xxl-job remoting server start success, nettype = {}, port = {}", EmbedServer.class, port);
 
                     // start registry
+                    // 启动机器注册线程，该线程每30秒(一个心跳时间)循环执行一次注册，当停止循环条件时，会执行一次取消注册。
                     startRegistry(appname, address);
 
                     // wait util stop
@@ -135,6 +136,12 @@ public class EmbedServer {
      *
      * @author xuxueli 2015-11-24 22:25:15
      */
+    // rpc的HttpServerHandler，暴露了五个接口
+        // 1. beat：心跳接口
+        // 2. idleBeat: 空闲心跳
+        // 3. run: 处理服务端的触发任务请求
+        // 4. kill: 杀死任务接口
+        // 5. log: 本地存储日志接口
     public static class EmbedHttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         private static final Logger logger = LoggerFactory.getLogger(EmbedHttpServerHandler.class);
 
